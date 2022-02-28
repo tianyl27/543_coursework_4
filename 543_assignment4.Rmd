@@ -90,11 +90,45 @@ clusterMap = clusterMap+ scale_fill_brewer(palette ='BuGn',
                               name=theLegTitle)+ labs(title=TitleText,
                                                       caption=CaptionText) +
   theme(plot.title = element_text(hjust = 1), 
-        plot.caption = element_text(hjust = 0))
+        plot.caption = element_text(hjust = 0),
+        axis.title.x = element_blank())
 # palette ='BuGn'
 # Next: change the color
 # How to get rid of the axis
 
 clusterMap%>%ggplotly()
+```
+```{r}
+library(leaflet)
+library(rgdal)
+
+
+# world <- rgdal::readOGR("https://github.com/EvansDataScience/VAforPM_Dashboard/raw/main/worldMap.geojson") 
+m <-leaflet(Map2021) %>%addTiles()
+factpal <- colorFactor(topo.colors(5), Map2021$cluster)
+
+leaflet(Map2021) %>%addTiles() %>%
+  addPolygons(fillColor = ~factpal(cluster),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "3",
+              fillOpacity = 0.7,
+              label = ~paste(NAME,": ", cluster),
+              highlightOptions = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE)
+              ) %>%
+  addLegend("bottomright", pal = factpal, values = ~cluster,
+    title = "Perfomance\n(grey is missing)",
+    labFormat = labelFormat(prefix = ""),
+    opacity = 1
+  )
+
+
+
 ```
 
