@@ -55,15 +55,15 @@ CovidDeath=readRDS(file=url(paste0(myWeb2,"CovidDeath.rds")))
 ggplotly(CovidDeath)
 ```
 ```{r}
-myWeb3="https://raw.githubusercontent.com/tianyl27/543_coursework_3/main/"
-GiniAge=readRDS(file=url(paste0(myWeb3,"GiniAndAge.rds")))
+GiniAge=readRDS(file=url(paste0(myWeb2,"GiniAndAge.rds")))
 # ggplotly(GiniAge)
 ```
 
 
 
 ```{r}
-CountryMap=readRDS(file=url(paste0(myWeb,"CountryMap.rds")))
+myWeb3="https://raw.githubusercontent.com/tianyl27/543_coursework_3/main/"
+CountryMap=readRDS(file=url(paste0(myWeb3,"CountryMap.rds")))
 ggplotly(CountryMap)
 ```
 
@@ -79,7 +79,7 @@ base=ggplot(data=mapWorld) + geom_sf(fill='grey90',
 
 ```{r}
 WHRData2021
-Map2021=readRDS(file=url(paste0(myWeb,"mapWorldVars.rds")))
+Map2021=readRDS(file=url(paste0(myWeb3,"mapWorldVars.rds")))
 # leaflet
 ```
 
