@@ -22,19 +22,12 @@ myWeb1="https://raw.githubusercontent.com/tianyl27/543_coursework_1/main/"
 
 LifeExp_bar=readRDS(file=url(paste0(myWeb1,"plot1.rds")))
 
-#link = 'https://raw.githubusercontent.com/tianyl27/543_coursework_1/main/WHR2021.csv'
-#link1 = 'https://raw.githubusercontent.com/tianyl27/543_coursework_4/main/table1.csv'
-
-# getting the data TABLE from the file:
-#WHRData2021 <- read.csv(file=url(link))
-#LifeExp <- read.csv(file=url(link))
 ```
 
 ##### Plot  
 ```{r}
 ggplotly(LifeExp_bar)
 #ANZ: Australia and New Zealand
-# how to get rid of the legend?
 ```
 
 
