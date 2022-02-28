@@ -18,57 +18,90 @@ library(sf)
 ##### Get the data  
 
 ```{r}
+myWeb1="https://raw.githubusercontent.com/tianyl27/543_coursework_1/main/"
 
-link = 'https://raw.githubusercontent.com/tianyl27/543_coursework_1/main/WHR2021.csv'
-link1 = 'https://raw.githubusercontent.com/tianyl27/543_coursework_4/main/table1.csv'
+LifeExp_bar=readRDS(file=url(paste0(myWeb1,"plot1.rds")))
+
+#link = 'https://raw.githubusercontent.com/tianyl27/543_coursework_1/main/WHR2021.csv'
+#link1 = 'https://raw.githubusercontent.com/tianyl27/543_coursework_4/main/table1.csv'
 
 # getting the data TABLE from the file:
-WHRData2021 <- read.csv(file=url(link))
-LifeExp <- read.csv(file=url(link))
+#WHRData2021 <- read.csv(file=url(link))
+#LifeExp <- read.csv(file=url(link))
+```
+
+##### Plot  
+```{r}
+ggplotly(LifeExp_bar)
+#ANZ: Australia and New Zealand
+# how to get rid of the legend?
+```
+
+
+####  chart  
+
+##### Get the data  
+
+
+```{r}
+myWeb2="https://raw.githubusercontent.com/tianyl27/543_coursework_2/main/"
+CovidDeath=readRDS(file=url(paste0(myWeb2,"CovidDeath.rds")))
+
 ```
 
 ##### Plot  
 
 ```{r}
-# title and caption text
-TitleText = "Average Healthy Life Expectancy for Each Region"
-CaptionText = "Source: https://worldhappiness.report/ed/2021/"
-
-# draw a picture of average life expectancy for each region
-base1 = ggplot(data=LifeExp_countries, aes(x=Region, y=LifeExp))+ theme_classic() + xlab("Region") + ylab("Healthy Life Expectancy") + scale_x_discrete(limits=LifeExp_countries$Region)
-
-# Get the average life expectancy for the whole world
-avg_LifeExp = mean(WHRData2021$Healthy.life.expectancy)
-low_regions=LifeExp[LifeExp_countries$LifeExp<avg_LifeExp,"Region"]
-low_regions
-
-annotation1=paste0('World Average:',round(avg_LifeExp,2))
-LifeExpMin = min(LifeExp_countries$LifeExp)
-LifeExpMax = max(LifeExp_countries$LifeExp)
-annotation2=paste0('Min:',round(LifeExpMin,2))
-annotation3=paste0('Max:',round(LifeExpMax,2))
-
-
-bar1 = base1 + geom_bar(stat="identity", position = "dodge", aes(fill=LifeExp<avg_LifeExp), show.legend = F)+scale_fill_manual(values=c("grey","coral")) + ylim(0,80)
-
-# add title and caption 
-bar2 = bar1 + coord_flip() + labs(title=TitleText, caption=CaptionText) + theme(plot.title = element_text(hjust = 0), plot.caption = element_text(hjust = -1))+ theme(axis.text.y = element_text(face=ifelse(LifeExp_countries$Region%in%low_regions,"bold","plain")))
-
-# add errorbar which shows the within-group variability
-bar3 = bar2 + geom_errorbar(aes(ymax = LifeExp+LifeExpStd, ymin = LifeExp-LifeExpStd), position = position_dodge(0.8),width=0.1,alpha=0.5) 
-
-# bar3
-
-
-
-# add annotations
-bar4 = bar2 + geom_hline(yintercept = round(avg_LifeExp,2), linetype=3, size=1, alpha=0.8)+ annotate(geom = 'text',label=annotation1,y = avg_LifeExp,x=5.5,angle=0) + annotate(geom = 'text',label=annotation2,y = LifeExpMin,x=10,angle=0) + annotate(geom = 'text',label=annotation3,y = LifeExpMax,x=1,angle=0) 
-
-bar4
-#ANZ: Australia and New Zealand
+ggplotly(CovidDeath)
 ```
 ```{r}
-ggplotly(bar4)
-# how to get rid of the legend?
+myWeb3="https://raw.githubusercontent.com/tianyl27/543_coursework_3/main/"
+GiniAge=readRDS(file=url(paste0(myWeb3,"GiniAndAge.rds")))
+# ggplotly(GiniAge)
+```
+
+
+
+```{r}
+CountryMap=readRDS(file=url(paste0(myWeb,"CountryMap.rds")))
+ggplotly(CountryMap)
+```
+
+```{r}
+linkMap="https://github.com/EvansDataScience/VAforPM_Spatial/raw/main/worldMap.geojson" 
+
+library(sf)
+mapWorld=read_sf(linkMap)
+base=ggplot(data=mapWorld) + geom_sf(fill='grey90',
+                                     color=NA) + theme_classic()
+
+```
+
+```{r}
+WHRData2021
+Map2021=readRDS(file=url(paste0(myWeb,"mapWorldVars.rds")))
+# leaflet
+```
+
+```{r}
+TitleText = "Country Performance in COVID epidemic"
+CaptionText = "Source: https://worldhappiness.report/ed/2021/"
+theLegTitle="World_Performance\n(grey is missing)"
+
+clusterMap= base + geom_sf(data=Map2021,
+                       aes(fill=cluster,text=NAME),
+                       color=NA)
+
+clusterMap = clusterMap+ scale_fill_brewer(palette ='BuGn',
+                              direction = -1,
+                              name=theLegTitle)+ labs(title=TitleText,
+                                                      caption=CaptionText) +
+  theme(plot.title = element_text(hjust = 1), 
+        plot.caption = element_text(hjust = 0))
+# palette ='BuGn'
+# Next: change the color
+# How to get rid of the axis
+
+clusterMap%>%ggplotly()
 ```
 
