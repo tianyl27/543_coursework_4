@@ -6,11 +6,12 @@ output: html_notebook
 
 ```{r}
 library(flexdashboard)
-###
 library(ggplot2)
 library(plotly)
 library(plyr)
 library(sf)
+library(leaflet)
+library(rgdal)
 
 ```
 #### Bar chart  
@@ -21,12 +22,44 @@ library(sf)
 myWeb1="https://raw.githubusercontent.com/tianyl27/543_coursework_1/main/"
 
 LifeExp_bar=readRDS(file=url(paste0(myWeb1,"plot1.rds")))
+LifeExp2021 <- read.csv(file=url(paste0(myWeb1,'table1.csv')))
+WHRData2021 <- read.csv(file=url(paste0(myWeb1,'WHR2021.csv')))
 
 ```
 
 ##### Plot  
 ```{r}
 ggplotly(LifeExp_bar)
+```
+```{r}
+# title and caption text
+TitleText = "Average Healthy Life Expectancy"
+CaptionText = "Source: https://worldhappiness.report/ed/2021/"
+
+# draw a picture of average life expectancy for each region
+base3 = ggplot(data=LifeExp2021, aes(x=Region, y=LifeExp))+ theme_classic() + xlab("Region") + ylab("Healthy Life Expectancy") + scale_x_discrete(limits=LifeExp2021$Region)
+
+# Get the average life expectancy for the whole world
+avg_LifeExp = mean(WHRData2021$Healthy.life.expectancy)
+low_regions=LifeExp2021[LifeExp2021$LifeExp<avg_LifeExp,"Region"]
+low_regions
+
+annotation1=paste0('World Average:',round(avg_LifeExp,2))
+LifeExpMin = min(LifeExp2021$LifeExp)
+LifeExpMax = max(LifeExp2021$LifeExp)
+annotation2=paste0('Min:',round(LifeExpMin,2))
+annotation3=paste0('Max:',round(LifeExpMax,2))
+
+
+bar3 = base3 + geom_bar(stat="identity", position = "dodge", aes(fill=LifeExp<avg_LifeExp), show.legend = F)+scale_fill_manual(values=c("grey","coral")) + ylim(0,80)
+
+# add title and caption 
+bar4 = bar3 + coord_flip() + labs(title=TitleText, caption=CaptionText) + theme(plot.title = element_text(hjust = 0), plot.caption = element_text(hjust = -1))+ theme(axis.text.y = element_text(face=ifelse(LifeExp2021$Region%in%low_regions,"bold","plain")))
+
+# add annotations
+bar6 = bar4 + geom_hline(yintercept = round(avg_LifeExp,2), linetype=3, size=1, alpha=0.8)+ annotate(geom = 'text',label=annotation1,y = avg_LifeExp,x=5.5,angle=0) + annotate(geom = 'text',label=annotation2,y = LifeExpMin,x=10,angle=0) + annotate(geom = 'text',label=annotation3,y = LifeExpMax,x=1,angle=0)+theme(legend.position='none')
+
+bar6
 #ANZ: Australia and New Zealand
 ```
 
@@ -71,7 +104,6 @@ base=ggplot(data=mapWorld) + geom_sf(fill='grey90',
 ```
 
 ```{r}
-WHRData2021
 Map2021=readRDS(file=url(paste0(myWeb3,"mapWorldVars.rds")))
 # leaflet
 ```
@@ -99,12 +131,7 @@ clusterMap = clusterMap+ scale_fill_brewer(palette ='BuGn',
 clusterMap%>%ggplotly()
 ```
 ```{r}
-library(leaflet)
-library(rgdal)
 
-
-# world <- rgdal::readOGR("https://github.com/EvansDataScience/VAforPM_Dashboard/raw/main/worldMap.geojson") 
-m <-leaflet(Map2021) %>%addTiles()
 factpal <- colorFactor(topo.colors(5), Map2021$cluster)
 
 leaflet(Map2021) %>%addTiles() %>%
@@ -116,7 +143,7 @@ leaflet(Map2021) %>%addTiles() %>%
               fillOpacity = 0.7,
               label = ~paste(NAME,": ", cluster),
               highlightOptions = highlightOptions(
-                weight = 5,
+                weight = 4,
                 color = "#666",
                 dashArray = "",
                 fillOpacity = 0.7,
