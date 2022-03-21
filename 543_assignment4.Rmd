@@ -28,9 +28,7 @@ WHRData2021 <- read.csv(file=url(paste0(myWeb1,'WHR2021.csv')))
 ```
 
 ##### Plot  
-```{r}
-ggplotly(LifeExp_bar)
-```
+
 ```{r}
 # title and caption text
 TitleText = "Average Healthy Life Expectancy"
@@ -62,7 +60,9 @@ bar6 = bar4 + geom_hline(yintercept = round(avg_LifeExp,2), linetype=3, size=1, 
 bar6
 #ANZ: Australia and New Zealand
 ```
-
+```{r}
+ggplotly(LifeExp_bar)
+```
 
 ####  chart  
 
