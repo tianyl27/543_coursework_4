@@ -57,7 +57,7 @@ bar4 = bar3 + coord_flip() + labs(title=TitleText, caption=CaptionText) + theme(
 # add annotations
 bar6 = bar4 + geom_hline(yintercept = round(avg_LifeExp,2), linetype=3, size=1, alpha=0.8)+ annotate(geom = 'text',label=annotation1,y = avg_LifeExp,x=5.5,angle=0) + annotate(geom = 'text',label=annotation2,y = LifeExpMin,x=10,angle=0) + annotate(geom = 'text',label=annotation3,y = LifeExpMax,x=1,angle=0)+theme(legend.position='none')
 
-bar6
+#bar6
 #ANZ: Australia and New Zealand
 ```
 ```{r}
